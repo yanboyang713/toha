@@ -18,16 +18,39 @@
           <ul class="tree" id="tree">
             <li id="list-heading"><a href="{{ .Type | relLangURL }}" data-filter="all">{{ i18n .Type }}</a></li>
             <div class="subtree">
-                {{ partial "navigators/sidebar.html" (dict "menuName" "notes" "menuItems" site.Menus.notes  "ctx" . ) }}
+              <!--{{ partial "navigators/sidebar.html" (dict "menuName" "notes" "menuItems" site.Menus.notes  "ctx" . ) }}-->
+	      {{ partial "navigators/sidebar.html" (dict "menuName" "sidebar" "menuItems" site.Menus.sidebar "ctx" .) }}
             </div>
           </ul>
         </div>
       </div>
     </div>
   </section>
-{{ end }}
+  {{ end }}
 
 {{ define "content" }}
+
+<section class="content-section" id="content-section">
+  <div class="content container-fluid" id="content">
+    <div class="container-fluid note-card-holder" id="note-card-holder">
+      {{ $note := where .RegularPagesRecursive "Layout" "!=" "search" }}
+      {{ $numShow := site.Params.features.pagination.maxNotesPerPage | default 12}}
+      {{ $paginator := .Paginate $note $numShow }}
+      {{ range $paginator.Pages }}
+        {{ if .Layout }}
+          {{/* ignore the search.md file*/}}
+        {{ else }}
+          {{ partial "cards/post.html" . }}
+        {{ end }}
+      {{ end }}
+    </div>
+    <div class="paginator">
+      {{ template "_internal/pagination.html" . }}
+    </div>
+  </div>
+</section>
+
+<!--
 <section class="content-section" id="content-section">
   <div class="content container-fluid" id="content">
     <div class="container-fluid note-card-holder" id="note-card-holder">
@@ -45,4 +68,7 @@
     </div>
   </div>
 </section>
+-->
+
 {{ end }}
+
